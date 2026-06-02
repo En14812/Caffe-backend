@@ -14,6 +14,16 @@ export class UserRepository {
     return res
   }
 
+  findOne(name: string) {
+    const res = this.userModel.findOne({ name }).exec();
+    return res;
+  }
+
+  findUserByName(name: string) {
+    const res = this.userModel.findOne({ name}).exec();
+    return res;
+  }
+
   createUser() {
 
   }

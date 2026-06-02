@@ -12,15 +12,18 @@ export class UserService {
         private readonly userRepository: UserRepository
     ) {}
 
-    // async findAll(): Promise<User[]> {
-    //     const res = await this.userModel.find().exec();
-    //     console.log('res service:', res);
-    //     return res;
-    // }
-
     async findAll() {
         const res = await this.userRepository.findAll();
-        console.log('res service:', res);
+        return res;
+    }
+
+    async findOne(name: string) {
+        const res = await this.userRepository.findOne(name);
+        return res;
+    }
+
+    async findUserByName(name: string) {
+        const res = await this.userRepository.findUserByName(name);
         return res;
     }
 

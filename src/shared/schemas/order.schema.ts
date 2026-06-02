@@ -33,7 +33,7 @@ export class Order {
     paymentType!: string;
 
     @Prop({required: true})
-    createAt!: Date;
+    createdAt!: Date;
 
     @Prop()
     status!: string;
