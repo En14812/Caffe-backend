@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Role, RoleDocument } from 'src/shared/schemas/role.schema';
 import { User, UserDocument } from 'src/shared/schemas/user.schema';
 import { UserRepository } from './user.repository';
+import { UserDTO } from 'src/shared/dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -17,18 +18,13 @@ export class UserService {
         return res;
     }
 
-    async findOne(name: string) {
-        const res = await this.userRepository.findOne(name);
-        return res;
-    }
-
     async findUserByName(name: string) {
         const res = await this.userRepository.findUserByName(name);
         return res;
     }
 
-    async createUser() {
-        const res = await this.userRepository.createUser();
+    async createUser(dto: UserDTO) {
+        const res = await this.userRepository.createUser(dto);
         return res;
     }
 
