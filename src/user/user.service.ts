@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Role, RoleDocument } from 'src/shared/schemas/role.schema';
 import { User, UserDocument } from 'src/shared/schemas/user.schema';
 import { UserRepository } from './user.repository';
-import { UserDTO } from 'src/shared/dto/user.dto';
+import { UpdateUserDTO, UserDTO } from 'src/shared/dto/user.dto';
+import { hashPassword } from 'src/shared/utils/password.util';
 
 @Injectable()
 export class UserService {
@@ -28,13 +29,29 @@ export class UserService {
         return res;
     }
 
-    async updateUser() {
-        const res = await this.userRepository.updateUser();
+    async updateUser(
+        id: string,
+        dto: UpdateUserDTO
+    ) {
+        const updatedData: any = {...dto};
+
+        if (dto.password) {
+            updatedData.password = await hashPassword(dto.password);
+        }
+
+        if (dto.role) {
+            if (!Types.ObjectId.isValid(dto.role)) {
+                throw new BadRequestException('Invalid Role ID format');
+            }
+            updatedData.role = new Types.ObjectId(dto.role);
+        }
+
+        const res = await this.userRepository.updateUser(id, updatedData);
         return res;
     }
 
-    async deleteUser() {
-        const res = await this.userRepository.deleteUser();
+    async deleteUser(id: string) {
+        const res = await this.userRepository.deleteUser(id);
         return res;
     }
 }

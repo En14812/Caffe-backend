@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { UserDTO } from 'src/shared/dto/user.dto';
+import { UpdateUserDTO, UserDTO } from 'src/shared/dto/user.dto';
 import { User, UserDocument } from 'src/shared/schemas/user.schema';
 import { hashPassword } from 'src/shared/utils/password.util';
 
@@ -32,11 +32,40 @@ export class UserRepository {
     });
   }
 
-  updateUser() {
+  async updateUser(id: string, dto: UpdateUserDTO) {
+    if (!Types.ObjectId.isValid(id)) {
+        throw new NotFoundException('Invalid User ID format');
+    }
 
+    const updatedData = await this.userModel.findByIdAndUpdate(
+      id,
+      { $set: dto }, //$set to access to tranfered feilds
+      { returnDocument: 'after' }
+    )
+    .populate('role')
+    .exec();
+
+    if (!updatedData) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return updatedData;
   }
+  
 
-  deleteUser() {
-    
+  async deleteUser(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid User ID format');
+    }
+
+    const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
+
+    if (!deletedUser) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return {
+      message: `User '${deletedUser.name}' has been successfully deleted`,
+    };
   }
 }
