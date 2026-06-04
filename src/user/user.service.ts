@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Role, RoleDocument } from 'src/shared/schemas/role.schema';
@@ -51,6 +51,10 @@ export class UserService {
     }
 
     async deleteUser(id: string) {
+        if (!Types.ObjectId.isValid(id)) {
+            throw new NotFoundException('Invalid User ID format');
+        }
+        
         const res = await this.userRepository.deleteUser(id);
         return res;
     }

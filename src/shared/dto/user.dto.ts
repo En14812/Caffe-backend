@@ -51,7 +51,3 @@ export class UpdateUserDTO {
     @IsOptional()
     role?: string;
 }
-
-export class DeleteUserDTO {
-
-}

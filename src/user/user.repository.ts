@@ -8,7 +8,7 @@ import { hashPassword } from 'src/shared/utils/password.util';
 @Injectable()
 export class UserRepository {
     constructor(
-        @InjectModel(User.name) private readonly userModel: Model<UserDocument>
+      @InjectModel(User.name) private readonly userModel: Model<UserDocument>
     ) {}
 
   findAll() {
@@ -46,7 +46,7 @@ export class UserRepository {
     .exec();
 
     if (!updatedData) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User ${id} not found`);
     }
 
     return updatedData;
@@ -54,18 +54,12 @@ export class UserRepository {
   
 
   async deleteUser(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException('Invalid User ID format');
-    }
-
     const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
 
     if (!deletedUser) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return {
-      message: `User '${deletedUser.name}' has been successfully deleted`,
-    };
+    return deletedUser;
   }
 }
