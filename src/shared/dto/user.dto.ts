@@ -12,8 +12,8 @@ export class UserDTO {
     @IsEmail()
     email!: string;
 
-    @IsNumber()
-    phone!: number;
+    @IsString()
+    phone!: string;
 
     @IsString()
     @IsNotEmpty()
@@ -43,9 +43,9 @@ export class UpdateUserDTO {
     @IsOptional()
     email?: string;
 
-    @IsNumber()
+    @IsString()
     @IsOptional()
-    phone?: number;
+    phone?: string;
 
     @IsString()
     @IsOptional()
