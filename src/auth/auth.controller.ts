@@ -22,8 +22,19 @@ export class AuthController {
     }
     
     @UseGuards(AuthGuard)
-    @Get('user')
+    @Get('account')
     async getUserInfo(@Request() request: { user: AuthenticatedUser }) {
-        return request.user;
+        
+        return {
+            message: 'Get user successfully',
+            statusCode: HttpStatus.OK.toString(),
+            meta: null,
+            data: {
+                type: 'user',
+                id: request.user.sub,
+                name: request.user.name,
+                role: request.user.role,
+            },
+        };
     }
 }

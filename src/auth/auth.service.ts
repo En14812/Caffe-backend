@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/shared/schemas/user.schema';
 import { UserService } from 'src/user/user.service';
 import { AuthResponse, SignInData } from './auth.types';
 import { LoginUserDTO } from 'src/shared/dto/user.dto';
-import { comparePassword } from 'src/shared/utils/password.util';
+import { comparePassword, hashPassword } from 'src/shared/utils/password.util';
 
 
 @Injectable()
@@ -14,51 +14,69 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async authenticate(input: LoginUserDTO): Promise<AuthResponse> {
+    async authenticate(input: LoginUserDTO): Promise<any> {
         const user = await this.validateUser(input);
 
+        console.log("authenticate user: ", user);
+
         if(!user) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Invalid credentials');
         }
 
-        const authResponse = await this.signIn(user);
+        const authResponse = await this.signIn(user as any);
 
         return authResponse;
     }
 
-    async validateUser(input: LoginUserDTO): Promise<SignInData | null> {
+    async validateUser(input: LoginUserDTO): Promise<User | null> {
         const user = await this.userService.findUserByName(input.name);
         
-        if (!user || user.password !== input.password) {
+        if (!user) {
+            console.error("user name not matched");
             return null;
         }
-        
+
         const passwordMatches = await comparePassword(
-            input.password, 
+            input.password,
             user.password
         );
 
         if (!passwordMatches) {
+            console.error("password not matched");
             return null;
         }
 
-        return {
-            userId: user._id.toString(),
-            name: user.name
-        };
+        return user as any;
     }
 
-    async signIn(user: SignInData): Promise<AuthResponse> {
+    async signIn(user: any): Promise<any> {
+        const roleName = user.role && typeof user.role === 'object' && user.role.name
+            ? user.role.name
+            : user.role?.toString();
+
         const tokenPayload = { 
-            sub: user.userId, 
-            name: user.name 
+            sub: user._id.toString(), 
+            name: user.name,
+            role: roleName
         };
 
         const accessToken = await this.jwtService.signAsync(tokenPayload);
-        return {
-            accessToken,
-            userId: user.userId,
-            name: user.name
-        }
+
+        const response = {
+            message: 'Login successful',
+            statusCode: HttpStatus.OK.toString(),
+            meta: null,
+            data: {
+                user: {
+                    type: 'user',
+                    id: user._id.toString(),
+                    name: user.name,
+                    role: roleName
+                },
+                access_token: accessToken
+            }
+        };
+
+        return response;
     }
 }

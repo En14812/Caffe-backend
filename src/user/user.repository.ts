@@ -17,7 +17,7 @@ export class UserRepository {
   }
 
   findUserByName(name: string) {
-    const res = this.userModel.findOne({ name }).exec();
+    const res = this.userModel.findOne({ name }).populate('role').exec();
     return res;
   }
 
