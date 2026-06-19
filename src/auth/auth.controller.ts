@@ -24,8 +24,11 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Get('account')
     async getUserInfo(@Request() request: { user: AuthenticatedUser }) {
-        
-        return {
+        console.log("getUserInfo account")
+
+        console.log("request.user: ", request.user)
+
+        const respone = {
             message: 'Get user successfully',
             statusCode: HttpStatus.OK.toString(),
             meta: null,
@@ -36,5 +39,8 @@ export class AuthController {
                 role: request.user.role,
             },
         };
+
+        console.log("respone: ", respone);
+        return respone;
     }
 }
