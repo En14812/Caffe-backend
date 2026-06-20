@@ -53,11 +53,12 @@ export class AuthService {
         const roleName = user.role && typeof user.role === 'object' && user.role.name
             ? user.role.name
             : user.role?.toString();
-
+            
         const tokenPayload = { 
             sub: user._id.toString(), 
             name: user.name,
-            role: roleName
+            role: roleName,
+            authority: roleName,
         };
 
         const accessToken = await this.jwtService.signAsync(tokenPayload);
@@ -67,12 +68,11 @@ export class AuthService {
             statusCode: HttpStatus.OK.toString(),
             meta: null,
             data: {
-                user: {
-                    type: 'user',
-                    id: user._id.toString(),
-                    name: user.name,
-                    role: roleName
-                },
+                type: 'user',
+                id: user._id.toString(),
+                name: user.name,
+                role: roleName,
+                authority: roleName,
                 access_token: accessToken
             }
         };
