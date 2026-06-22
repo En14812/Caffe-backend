@@ -20,14 +20,24 @@ export class AuthController {
         const res = await this.authService.authenticate(input);
         return res;
     }
+
+    @UseGuards(AuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @Post('logout')
+    async logout(@Request() request: { user: AuthenticatedUser }) {
+        console.log('logout user:', request.user);
+
+        return {
+            message: 'Logout successful',
+            statusCode: HttpStatus.OK.toString(),
+            meta: null,
+            data: null,
+        };
+    }
     
     @UseGuards(AuthGuard)
     @Get('account')
     async getUserInfo(@Request() request: { user: AuthenticatedUser }) {
-        console.log("getUserInfo account")
-
-        console.log("request.user: ", request.user)
-
         const respone = {
             message: 'Get user successfully',
             statusCode: HttpStatus.OK.toString(),
@@ -40,7 +50,6 @@ export class AuthController {
             },
         };
 
-        console.log("respone: ", respone);
         return respone;
     }
 }
