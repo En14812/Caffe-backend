@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserDTO, UserDTO } from 'src/shared/dto/user.dto';
+import { UpdateUserDTO, UserDTO, UserPagingDTO } from 'src/shared/dto/user.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -12,6 +13,15 @@ export class UserController {
     @Get('all')
     findAll() {
         const res = this.userService.findAll();
+        return res;
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('users-paging')
+    getUsersPaging(
+        @Query() query: UserPagingDTO
+    ) {
+        const res = this.userService.findByPaging(query);
         return res;
     }
 

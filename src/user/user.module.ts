@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/shared/schemas/user.schema';
 import { Role, RoleSchema } from 'src/shared/schemas/role.schema';
 import { UserRepository } from './user.repository';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Module({
   imports: [

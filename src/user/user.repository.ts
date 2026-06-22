@@ -16,6 +16,28 @@ export class UserRepository {
     return res
   }
 
+  async findUsersPaging(
+    filter: any,
+    sort: any,
+    skip: number,
+    limit: number
+  ): Promise<User[]> {
+    const res = this.userModel
+    .find(filter)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .populate('role')
+    .lean()
+    .exec();
+    
+    return res;
+  }
+
+  async countUsers(filter: any): Promise<number> {
+    return this.userModel.countDocuments(filter).exec();
+  }
+
   findUserByName(name: string) {
     const res = this.userModel.findOne({ name }).populate('role').exec();
     return res;
