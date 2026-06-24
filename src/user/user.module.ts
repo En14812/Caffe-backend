@@ -6,6 +6,7 @@ import { User, UserSchema } from 'src/shared/schemas/user.schema';
 import { Role, RoleSchema } from 'src/shared/schemas/role.schema';
 import { UserRepository } from './user.repository';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RoleRepository } from 'src/role/role.repository';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
   controllers: [UserController],
   providers: [
     UserService,
-    UserRepository
+    UserRepository,
+    RoleRepository
   ],
   exports: [UserService]
 })

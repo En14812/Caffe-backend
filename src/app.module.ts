@@ -6,6 +6,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
+import { RoleController } from './role/role.controller';
+import { RoleService } from './role/role.service';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -21,7 +24,8 @@ import { ProductModule } from './product/product.module';
       }),
       inject: [ConfigService],
     }),
-    AuthModule
+    AuthModule,
+    RoleModule
   ],
   controllers: [AppController],
   providers: [AppService],

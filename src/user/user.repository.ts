@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { RoleRepository } from 'src/role/role.repository';
 import { UpdateUserDTO, UserDTO } from 'src/shared/dto/user.dto';
 import { User, UserDocument } from 'src/shared/schemas/user.schema';
 import { hashPassword } from 'src/shared/utils/password.util';
@@ -38,7 +39,7 @@ export class UserRepository {
     return this.userModel.countDocuments(filter).exec();
   }
 
-  findUserByName(name: string) {
+  async findUserByName(name: string) {
     const res = this.userModel.findOne({ name }).populate('role').exec();
     return res;
   }
@@ -61,7 +62,7 @@ export class UserRepository {
 
     const updatedData = await this.userModel.findByIdAndUpdate(
       id,
-      { $set: dto }, //$set to access to tranfered feilds
+      { $set: dto },
       { returnDocument: 'after' }
     )
     .populate('role')

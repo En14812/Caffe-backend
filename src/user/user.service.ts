@@ -6,12 +6,14 @@ import { User, UserDocument } from 'src/shared/schemas/user.schema';
 import { UserRepository } from './user.repository';
 import { UpdateUserDTO, UserDTO, UserPagingDTO } from 'src/shared/dto/user.dto';
 import { hashPassword } from 'src/shared/utils/password.util';
+import { RoleRepository } from 'src/role/role.repository';
 
 @Injectable()
 export class UserService {
 
     constructor(
-        private readonly userRepository: UserRepository
+        private readonly userRepository: UserRepository,
+        private readonly roleRepository: RoleRepository
     ) {}
 
     async findAll() {
@@ -61,13 +63,13 @@ export class UserService {
         const limit = pageSize;
 
         //find data:
-        const [rawUsers, total] = await Promise.all([
+        const [rawData, total] = await Promise.all([
             this.userRepository.findUsersPaging(filter, sortOptions, skip, limit),
             this.userRepository.countUsers(filter),
         ]);
 
         //mapping data:
-        const mappedUsers = rawUsers.map((user: any) => ({
+        const mappedData = rawData.map((user: any) => ({
             id: user._id.toString(),
             name: user.name,
             email: user.email || '',
@@ -83,13 +85,32 @@ export class UserService {
                 page: page,
                 size: size,
             },
-            data: mappedUsers,
+            data: mappedData,
         }
     }
 
     async createUser(dto: UserDTO) {
-        const res = await this.userRepository.createUser(dto);
-        return res;
+        const userRole = await this.roleRepository.findByName(dto.role);
+        
+        const userPayLoad: UserDTO = {
+            name: dto.name,
+            password: dto.password,
+            email: dto.email,
+            phone: dto.phone,
+            role: userRole!._id.toString()
+        }
+
+        const res = await this.userRepository.createUser(userPayLoad);
+        return {
+            message: 'Create user successfully',
+            statusCode: 'SUCCESS',
+            meta: null,
+            data: {
+                id: res._id.toString(),
+                name: res.name,
+                email: res.email
+            }
+        };
     }
 
     async updateUser(
@@ -98,19 +119,35 @@ export class UserService {
     ) {
         const updatedData: any = {...dto};
 
+        console.log("updatedData",updatedData);
+
         if (dto.password) {
             updatedData.password = await hashPassword(dto.password);
         }
 
         if (dto.role) {
-            if (!Types.ObjectId.isValid(dto.role)) {
+            const userRole = await this.roleRepository.findByName(dto.role);
+
+            if (!userRole) {
                 throw new BadRequestException('Invalid Role ID format');
             }
-            updatedData.role = new Types.ObjectId(dto.role);
+
+            updatedData.role = userRole._id;
         }
 
-        const res = await this.userRepository.updateUser(id, updatedData);
-        return res;
+        const res: any = await this.userRepository.updateUser(id, updatedData);
+        return {
+            message: 'Update user successfully',
+            statusCode: 'SUCCESS',
+            meta: null,
+            data: {
+                id: res._id.toString(),
+                name: res.name,
+                email: res.email,
+                phone: res.phone || '',
+                role: res.role?.name || '', // Trả lại chữ "KITCHEN" cho Frontend hiển thị
+            }
+        };
     }
 
     async deleteUser(id: string) {
