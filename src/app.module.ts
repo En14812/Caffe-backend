@@ -9,6 +9,7 @@ import { ProductModule } from './product/product.module';
 import { RoleController } from './role/role.controller';
 import { RoleService } from './role/role.service';
 import { RoleModule } from './role/role.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { RoleModule } from './role/role.module';
       inject: [ConfigService],
     }),
     AuthModule,
-    RoleModule
+    RoleModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],

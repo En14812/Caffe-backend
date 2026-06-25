@@ -80,7 +80,7 @@ export class UserController {
      ) {
         const res = await this.userService.deleteUser(id);
         return {
-            statusCode: 200,
+            statusCode: 'SUCCESS',
             message: `User '${res.name}' has been successfully deleted`,
         };
      }

@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { ProductDTO } from 'src/shared/dto/product.dto';
+import { ProductDTO, ProductPagingDTO } from 'src/shared/dto/product.dto';
 
 @Controller('product')
 export class ProductController {
@@ -11,6 +11,14 @@ export class ProductController {
     @Get('all')
     findAllProducts() {
         const res = this.productService.findAllProducts();
+        return res;
+    }
+
+    @Get('products-paging')
+    getProductsPaging(
+        @Query() query: ProductPagingDTO
+    ) {
+        const res = this.productService.findByPaging(query);
         return res;
     }
 
@@ -37,7 +45,7 @@ export class ProductController {
     ) {
         const res = await this.productService.deleteProduct(id);
         return {
-            statusCode: 200,
+            statusCode: 'SUCCESS',
             message: `Product '${res.name}' has been successfully deleted`,
         };
     }

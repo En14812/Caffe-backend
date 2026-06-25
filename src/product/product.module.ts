@@ -4,14 +4,14 @@ import { ProductService } from './product.service';
 import { ProductRepository } from './product.repository';
 import { Product, ProductSchema } from 'src/shared/schemas/product.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ProductCategory, ProductCategorySchema } from 'src/shared/schemas/productCategory.schema';
+import { Category, CategorySchema } from 'src/shared/schemas/category.schema';
 
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Product.name, schema: ProductSchema },
-      { name: ProductCategory.name, schema: ProductCategorySchema }
+      { name: Category.name, schema: CategorySchema }
     ])
   ],
   controllers: [ProductController],

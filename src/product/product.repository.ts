@@ -11,8 +11,30 @@ export class ProductRepository {
     ) {}
 
     findAllProducts() {
-        const res = this.productModel.find().exec();
+        const res = this.productModel.find().lean().exec();
         return res;
+    }
+
+    async findByPaging(
+        filter: any,
+        sort: any,
+        skip: number,
+        limit: number
+    ): Promise<Product[]> {
+        const res = this.productModel
+        .find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .populate('category')
+        .lean()
+        .exec();
+
+        return res;
+    }
+
+    async countProducts(filter: any): Promise<number> {
+        return this.productModel.countDocuments(filter).exec();
     }
 
     async createProduct(dto: ProductDTO) {
@@ -20,8 +42,10 @@ export class ProductRepository {
             name: dto.name,
             price: dto.price,
             description: dto.description,
-            category: new Types.ObjectId(dto.category)
+            category: new Types.ObjectId(dto.category),
+            status: dto.status
         });
+
         return res;
     }
 
@@ -38,7 +62,7 @@ export class ProductRepository {
             { $set: dto }, //$set to access to tranfered feilds
             { returnDocument: 'after' }
         )
-        .populate('product_category')
+        .populate('category')
         .exec();
 
         if (!updatedData) {
