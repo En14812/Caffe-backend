@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductRepository } from './product.repository';
-import { ProductDTO, ProductPagingDTO } from 'src/shared/dto/product.dto';
+import { ProductDTO, ProductPagingDTO, UpdatedProductDTO } from 'src/shared/dto/product.dto';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -82,7 +82,7 @@ export class ProductService {
 
     async updateProduct(
         id: string,
-        dto: ProductDTO
+        dto: UpdatedProductDTO
     ) {
         const updatedData: any = {...dto};
 

@@ -13,9 +13,6 @@ export class Category {
 
     @Prop()
     destination?: string;
-
-    @Prop({required: true})
-    index!: number;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { ProductDTO, ProductPagingDTO } from 'src/shared/dto/product.dto';
+import { ProductDTO, ProductPagingDTO, UpdatedProductDTO } from 'src/shared/dto/product.dto';
 
 @Controller('product')
 export class ProductController {
@@ -33,7 +33,7 @@ export class ProductController {
     @Put('update/:id')
     updateProduct(
         @Param('id') id: string,
-        @Body() dto: ProductDTO
+        @Body() dto: UpdatedProductDTO
     ) {
         const res = this.productService.updateProduct(id, dto);
         return res;
