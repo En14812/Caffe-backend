@@ -10,6 +10,8 @@ import { RoleController } from './role/role.controller';
 import { RoleService } from './role/role.service';
 import { RoleModule } from './role/role.module';
 import { CategoryModule } from './category/category.module';
+import { TableModule } from './table/table.module';
+import { TableCategoryModule } from './table-category/table-category.module';
 
 @Module({
   imports: [
@@ -27,7 +29,9 @@ import { CategoryModule } from './category/category.module';
     }),
     AuthModule,
     RoleModule,
-    CategoryModule
+    CategoryModule,
+    TableModule,
+    TableCategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],
